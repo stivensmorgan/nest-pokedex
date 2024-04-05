@@ -1,16 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { PokemonService } from './pokemon.service';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
-import { ParseMongoIdPipe } from 'src/common/pipes/parse-mongo-id/parse-mongo-id.pipe';
-import { PaginationDto } from 'src/common/dtos/pagination.dto';
+
+import { ParseMongoIdPipe } from 'src/common/pipes/parse-mongo-id.pipe';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Controller('pokemon')
 export class PokemonController {
   constructor(private readonly pokemonService: PokemonService) {}
 
   @Post()
-  @HttpCode(HttpStatus.OK) // Para personalizar los condigos de retorno.. default 201 (ACCEPTED)
   create(@Body() createPokemonDto: CreatePokemonDto) {
     return this.pokemonService.create(createPokemonDto);
   }
@@ -20,21 +20,18 @@ export class PokemonController {
     return this.pokemonService.findAll( paginationDto );
   }
 
-  @Get(':criteria')
-  findOne(@Param('criteria') criteria: string) {
-    return this.pokemonService.findOne(criteria);
+  @Get(':term')
+  findOne(@Param('term') term: string) {
+    return this.pokemonService.findOne( term );
   }
 
-  @Patch(':criteria')
-  update(
-    @Param('criteria') criteria: string,
-    @Body() updatePokemonDto: UpdatePokemonDto,
-  ) {
-    return this.pokemonService.update(criteria, updatePokemonDto);
+  @Patch(':term')
+  update(@Param('term') term: string, @Body() updatePokemonDto: UpdatePokemonDto) {
+    return this.pokemonService.update( term, updatePokemonDto);
   }
 
   @Delete(':id')
   remove(@Param('id', ParseMongoIdPipe ) id: string) {
-    return this.pokemonService.remove(id);
+    return this.pokemonService.remove( id );
   }
 }
